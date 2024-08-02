@@ -1,4 +1,6 @@
 const SHEET_URL = PropertiesService.getScriptProperties().getProperty('SHEET_URL');
+const SHEET = SpreadsheetApp.openByUrl(SHEET_URL);
+const FIRSTSHEET = SHEET.getSheets()[0];
 
 function confirmInformation() {
   const threads = getThreads();
@@ -31,20 +33,17 @@ function getStudyInfo(message) {
 }
 
 function classifyStudyInfo(studyInfoList) {
-  for (const stufyInfo of studyInfoList) {
-    const infoList = stufyInfo.split('\n');
+  for (let i = 0; i < studyInfoList.length; i++) {
+    const infoList = studyInfoList[i].split('\n');
     const title = infoList[1];
-    const date = infoList[2];
-    const url = infoList[4];
-    setSheet(title, 1);
-    setSheet(date, 2);
-    setSheet(url, 3);
+    const url = infoList[2].substring(1, infoList[2].length - 1);
+    const date = infoList[4];
+    setSheet(title, i + 2, 1);
+    setSheet(url, i + 2, 2);
+    setSheet(date, i + 2, 3);
   }
 }
 
-function setSheet(value, col) {
-  const spreadSheet = SpreadsheetApp.openByUrl(SHEET_URL);
-  const firstSheet = spreadSheet.getSheets()[0];
-  const lastRow = firstSheet.getLastRow();
-  firstSheet.getRange(lastRow + 1, col).setValue(value);
+function setSheet(value, row, col) {
+  FIRSTSHEET.getRange(row, col).setValue(value);
 }
